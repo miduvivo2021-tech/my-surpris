@@ -63,6 +63,24 @@
             box-shadow: 0 0 12px rgba(255, 105, 180, 0.9);
             display: block;
         }
+        
+        /* ปุ่มเปิด/ปิดเพลงสไตล์น่ารักๆ ด้านบน */
+        .music-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 105, 180, 0.2);
+            border: 2px solid #ff69b4;
+            color: #ff69b4;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            z-index: 30;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
+        }
+
         .instruction {
             position: absolute;
             bottom: 30px;
@@ -86,6 +104,8 @@
     <audio id="bg-music" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=romantic-love-112165.mp3" type="audio/mpeg">
     </audio>
+
+    <button class="music-btn" id="music-toggle">🎵 เปิดเพลง</button>
 
     <div class="heart-container" id="heart"></div>
     <div id="scatter-layer"></div>
@@ -139,13 +159,26 @@
         }
 
         const music = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
         let hideTimeout;
 
-        document.body.addEventListener('click', () => {
+        // ระบบกดปุ่มเปิด/ปิดเพลง
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // ป้องกันไม่ให้ไปโดนอีเวนต์คลิกหน้าจอหลัก
             if (music.paused) {
-                music.play().catch(e => console.log("Audio play blocked"));
+                music.play().then(() => {
+                    musicBtn.innerText = "🔇 ปิดเพลง";
+                }).catch(err => {
+                    console.log("Play blocked", err);
+                });
+            } else {
+                music.pause();
+                musicBtn.innerText = "🎵 เปิดเพลง";
             }
+        });
 
+        // ระบบแตะหน้าจอกระจายรูป
+        document.body.addEventListener('click', () => {
             scatterItems.forEach(item => {
                 let x = item.dataset.x;
                 let y = item.dataset.y;
