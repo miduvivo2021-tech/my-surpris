@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Surprise</title>
+    <title>Heart Surprise - Romantic Song</title>
     <style>
         body {
             margin: 0;
             background-color: #000;
             color: #fff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
             font-family: sans-serif;
+        }
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 105, 180, 0.2);
+            border: 1px solid #ff69b4;
+            color: #ff69b4;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
         }
         .tap-text {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+            color: #ff69b4;
             animation: pulse 1.5s infinite;
             text-align: center;
+            margin-top: 20px;
         }
         @keyframes pulse {
             0% { opacity: 0.3; }
@@ -31,25 +49,40 @@
 </head>
 <body>
 
-    <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่ม ❤️</div>
+    <!-- ปุ่มเปิดเพลงมุมขวาบน -->
+    <button class="music-btn" id="musicBtn">🎵 เปิดเพลง</button>
 
-    <!-- ตัวอย่างการใส่ไฟล์เสียง -->
-    <audio id="bgMusic" loop>
-        <source src="your-audio-file.mp3" type="audio/mpeg">
+    <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่มความหวาน ❤️</div>
+
+    <!-- ใช้ลิงก์เพลงเสียงดนตรีบรรเลงโรแมนติกที่เปิดได้จริง -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://actions.google.com/sounds/v1/ambiences/romantic_compilation.ogg" type="audio/ogg">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=romantic-guitars-112134.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        const body = document.body;
         const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
         const promptText = document.getElementById('promptText');
+        const body = document.body;
+
+        function playMusic() {
+            music.play().then(() => {
+                promptText.style.display = 'none';
+                musicBtn.textContent = '🔊 กำลังเล่นเพลง';
+            }).catch(error => {
+                console.log("Autoplay was prevented:", error);
+            });
+        }
+
+        // รองรับทั้งการกดปุ่มและแตะหน้าจอ
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playMusic();
+        });
 
         body.addEventListener('click', () => {
-            // เล่นเพลงเมื่อมีการแตะหน้าจอครั้งแรก
-            music.play().then(() => {
-                promptText.style.display = 'none'; // ซ่อนข้อความเมื่อแตะแล้ว
-            }).catch(error => {
-                console.log("Audio play blocked", error);
-            });
+            playMusic();
         });
     </script>
 
