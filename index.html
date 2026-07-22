@@ -9,19 +9,24 @@
             background-color: #000;
             color: #ff69b4;
             font-family: sans-serif;
-            text-align: center;
-            overflow: hidden;
             margin: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
         .heart-container {
-            font-size: 13px; /* ปรับขนาดตัวอักษรให้พอดีจอ iPhone มากขึ้น */
-            line-height: 1.2;
-            white-space: pre;
-            animation: pulse 1.2s infinite;
+            position: relative;
+            width: 320px;
+            height: 320px;
+            animation: pulse 1.2s infinite ease-in-out;
+        }
+        .heart-container span {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
         }
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -32,21 +37,22 @@
 </head>
 <body>
 
-    <div class="heart-container">
-            ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-        ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-      ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-    ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-   ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-  ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-   ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-    ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-     ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-      ຮັກ ❤️ ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-        ຮັກ ❤️ ຮັກ ❤️ ຮັກ
-          ຮັກ ❤️ ຮັກ
-            ຮັກ
-    </div>
+    <div class="heart-container" id="heart"></div>
+
+    <script>
+        const container = document.getElementById('heart');
+        // สร้างเส้นโค้งรูปหัวใจตามหลักคณิตศาสตร์ เป๊ะๆ ไม่เบี้ยวแน่นอน
+        for (let t = 0; t < Math.PI * 2; t += 0.22) {
+            let x = 160 + 130 * (16 * Math.sin(t)**3) / 16;
+            let y = 160 - 130 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+            
+            let span = document.createElement('span');
+            span.innerHTML = "ຮັກ ❤️";
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            container.appendChild(span);
+        }
+    </script>
 
 </body>
 </html>
