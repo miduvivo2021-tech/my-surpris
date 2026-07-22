@@ -16,11 +16,11 @@
             cursor: pointer;
         }
 
-        /* เอฟเฟกต์หัวใจตกลงมาทีละกลุ่ม */
-        .falling-heart {
+        /* ดาวตกและหัวใจร่วงด้านหลังสุด (z-index: 0) ไม่บังตัวหนังสือ */
+        .falling-object {
             position: absolute;
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
             animation: fallDown linear forwards;
         }
         @keyframes fallDown {
@@ -95,7 +95,7 @@
             height: 6px;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 3;
+            z-index: 2;
             animation: explode 0.8s ease-out forwards;
         }
         @keyframes explode {
@@ -134,7 +134,7 @@
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
-        // ระบบเสียงพลุแบบเดิม (กดปุ๊บดังปั๊บ สั้นกระชับสมจริง)
+        // ระบบเสียงพลุสั้นกระชับสมจริง กดปุ๊บดังปั๊บ
         let audioCtx = null;
         function playFireworkSound() {
             try {
@@ -208,10 +208,10 @@
             scatterItems.push(div);
         }
 
-        // ฟังก์ชันสร้างพลุ
+        // ฟังก์ชันสร้างพลุ 30 ดอก
         function createFireworks(clientX, clientY) {
             const colors = ['#ff69b4', '#ff1493', '#ff6b81', '#ff4757', '#ffa502', '#ffffff', '#eccc68'];
-            const particleCount = 25;
+            const particleCount = 30;
 
             for (let i = 0; i < particleCount; i++) {
                 let fw = document.createElement('div');
@@ -221,7 +221,7 @@
                 fw.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
                 let angle = Math.random() * Math.PI * 2;
-                let distance = 40 + Math.random() * 120;
+                let distance = 50 + Math.random() * 140;
                 let tx = Math.cos(angle) * distance;
                 let ty = Math.sin(angle) * distance;
                 
@@ -233,23 +233,25 @@
             }
         }
 
-        // 3. ฟังก์ชันสร้างหัวใจหล่นลงมาทีละ 5-6 ดวงต่อรอบ
-        function createFallingHeartsGroup() {
-            let heartCount = 5 + Math.floor(Math.random() * 2); // สุ่ม 5 หรือ 6 ดวง
-            for (let i = 0; i < heartCount; i++) {
-                let heart = document.createElement('div');
-                heart.className = 'falling-heart';
-                heart.innerHTML = '❤️';
-                heart.style.fontSize = (12 + Math.random() * 10) + 'px';
-                heart.style.left = (Math.random() * window.innerWidth) + 'px';
-                heart.style.top = '-40px';
+        // 3. ฟังก์ชันสร้างดาวตกและหัวใจหล่นลงมาทีละ 5-6 ดวงต่อรอบ (อยู่ด้านหลังสุด)
+        function createFallingGroup() {
+            let groupCount = 5 + Math.floor(Math.random() * 2); // สุ่ม 5 หรือ 6 ดวง
+            for (let i = 0; i < groupCount; i++) {
+                let obj = document.createElement('div');
+                obj.className = 'falling-object';
+                
+                // สุ่มว่าเป็นดาวตก (✨) หรือหัวใจ (❤️)
+                obj.innerHTML = Math.random() > 0.5 ? '❤️' : '✨';
+                obj.style.fontSize = (12 + Math.random() * 10) + 'px';
+                obj.style.left = (Math.random() * window.innerWidth) + 'px';
+                obj.style.top = '-40px';
                 
                 let duration = 2.5 + Math.random() * 2;
-                heart.style.animationDuration = duration + 's';
+                obj.style.animationDuration = duration + 's';
                 
-                document.body.appendChild(heart);
+                document.body.appendChild(obj);
                 setTimeout(() => {
-                    heart.remove();
+                    obj.remove();
                 }, duration * 1000);
             }
         }
@@ -261,12 +263,12 @@
             createFireworks(randomX, randomY);
         }, 600);
 
-        // ปล่อยหัวใจหล่นลงมาทีละ 5-6 ดวง ทุกๆ 600 มิลลิวินาที
+        // ปล่อยดาวตกและหัวใจทีละ 5-6 ดวง ทุกๆ 700 มิลลิวินาที
         setInterval(() => {
-            createFallingHeartsGroup();
-        }, 600);
+            createFallingGroup();
+        }, 700);
 
-        // 4. แตะหน้าจอ (พลุ + เสียงสั้นดังทันที + กระจายรูป)
+        // 4. แตะหน้าจอ (ยิง 30 ดอก + เสียงดังทันที + กระจายรูป)
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
             scatterItems.forEach(item => {
