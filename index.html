@@ -20,11 +20,11 @@
             position: relative;
         }
 
-        /* --- โครงสร้างรูปหัวใจตัวอักษรแบบต้นฉบับ (ข้อความวิ่ง/ขยับเต้น) --- */
+        /* --- โครงสร้างรูปหัวใจตัวอักษรเรียงตัวแบบในวิดีโอ --- */
         .heart-container {
             position: relative;
-            width: 280px;
-            height: 280px;
+            width: 340px;
+            height: 340px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -41,13 +41,13 @@
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.08); }
         }
 
         /* --- ข้อความแตะหน้าจอ --- */
         .tap-text {
             position: absolute;
-            bottom: 90px;
+            bottom: 80px;
             font-size: 1.2rem;
             color: #ff69b4;
             animation: pulse 1.5s infinite;
@@ -65,8 +65,8 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: 2px solid #fff;
             box-shadow: 0 0 15px #ff69b4;
@@ -91,17 +91,41 @@
 </head>
 <body>
 
+    <!-- รูปหัวใจข้อความตามคลิปวิดีโอ -->
     <div class="heart-container" id="heartContainer">
-        <div class="t" style="transform: translate(0px, -90px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(-55px, -65px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(55px, -65px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(-95px, -25px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(95px, -25px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(-80px, 20px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(80px, 20px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(-50px, 65px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(50px, 65px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
-        <div class="t" style="transform: translate(0px, 105px);">ຮັກຫມີພູທີ່ສຸດในໂລກ ❤️</div>
+        <!-- โค้งด้านซ้ายบน -->
+        <div class="t" style="transform: translate(-45px, -100px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(-90px, -80px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(-125px, -50px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(-145px, -15px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        
+        <!-- โค้งด้านขวาบน -->
+        <div class="t" style="transform: translate(45px, -100px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(90px, -80px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(125px, -50px);">ຮักຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(145px, -15px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+
+        <!-- รอยหยักตรงกลางด้านบน -->
+        <div class="t" style="transform: translate(0px, -75px);">ຮັກຫມີພູที่ສຸດ❤️</div>
+
+        <!-- ตัวถังหัวใจฝั่งซ้ายและขวา (ไล่ระดับลงมา) -->
+        <div class="t" style="transform: translate(-135px, 25px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(135px, 25px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        
+        <div class="t" style="transform: translate(-115px, 60px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(115px, 60px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+
+        <div class="t" style="transform: translate(-90px, 90px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(90px, 90px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+
+        <div class="t" style="transform: translate(-60px, 115px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(60px, 115px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+
+        <div class="t" style="transform: translate(-30px, 135px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+        <div class="t" style="transform: translate(30px, 135px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
+
+        <!-- ปลายแหลมด้านล่างสุด -->
+        <div class="t" style="transform: translate(0px, 155px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
     </div>
 
     <div class="tap-text" id="promptText">แตะหน้าจอ ❤️</div>
@@ -109,7 +133,7 @@
     <script>
         const promptText = document.getElementById('promptText');
         
-        // ลิงก์รูปภาพที่จะสุ่มลอยออกมา (สามารถเปลี่ยนลิงก์รูปภาพของคุณตรงนี้ได้เลย)
+        // ลิงก์รูปภาพที่จะสุ่มลอยออกมาตอนกดหน้าจอ (สามารถเปลี่ยนลิงก์รูปภาพของคุณได้ตรงนี้)
         const photoUrls = [
             'https://i.imgur.com/bM9y4oP.jpeg',
             'https://i.imgur.com/2i9oGfP.jpeg',
@@ -117,13 +141,13 @@
             'https://i.imgur.com/L2nU3vD.jpeg'
         ];
 
-        // เมื่อแตะหน้าจอ รูปภาพจะพุ่งกระจายออกมา
+        // เมื่อกดแตะหน้าจอ
         document.body.addEventListener('click', () => {
             if (promptText.style.display !== 'none') {
-                promptText.style.display = 'none'; // ซ่อนข้อความ "แตะหน้าจอ"
+                promptText.style.display = 'none'; // ซ่อนข้อความแตะหน้าจอ
             }
 
-            // แตะ 1 ครั้ง สุ่มปล่อยรูปออกมา 3 รูปพร้อมกันเพื่อความสวยงาม
+            // แตะ 1 ครั้ง สุ่มปล่อยรูปออกมา 3 รูปพร้อมกัน
             for (let i = 0; i < 3; i++) {
                 createFloatingPhoto();
             }
@@ -134,9 +158,9 @@
             photo.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
             photo.classList.add('floating-photo');
             
-            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ
-            const moveX = (Math.random() - 0.5) * 650;
-            const moveY = (Math.random() - 0.5) * 650;
+            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ หน้าจอ
+            const moveX = (Math.random() - 0.5) * 700;
+            const moveY = (Math.random() - 0.5) * 700;
             photo.style.setProperty('--move-x', `${moveX}px`);
             photo.style.setProperty('--move-y', `${moveY}px`);
 
