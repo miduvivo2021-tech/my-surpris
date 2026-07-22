@@ -23,16 +23,11 @@
         }
         .heart-item {
             position: absolute;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             white-space: nowrap;
-            /* ให้วิ่งวนตามหัวใจและขยับนุ่มนวล */
-            animation: moveAlongHeart 6s linear infinite;
-        }
-        @keyframes moveAlongHeart {
-            0% { opacity: 0.3; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.3; transform: scale(0.9); }
+            /* วิ่งวนเป็นวงรอบรูปหัวใจอย่างลื่นไหล */
+            animation: moveHeartPath 4s linear infinite;
         }
     </style>
 </head>
@@ -42,23 +37,39 @@
 
     <script>
         const container = document.getElementById('heart');
-        let total = 22; // จำนวนคำที่เรียงตามเส้นหัวใจ
         
-        for (let i = 0; i < total; i++) {
+        // จุดพิกัดเส้นโค้งรูปหัวใจ
+        let points = [];
+        let totalPoints = 24;
+        
+        for (let i = 0; i < totalPoints; i++) {
+            let t = (i / totalPoints) * Math.PI * 2;
+            let x = 140 + 110 * (16 * Math.sin(t)**3) / 16;
+            let y = 140 - 110 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+            points.push({x: x, y: y});
+        }
+
+        // สร้างตัวหนังสือวิ่งสลับตำแหน่งตามพิกัดหัวใจ
+        let textCount = 12;
+        for (let i = 0; i < textCount; i++) {
             let span = document.createElement('span');
             span.className = 'heart-item';
             span.innerHTML = "ຮັກຫມີພູ❤️";
             
-            // คำนวณตำแหน่งตามเส้นโค้งหัวใจ
-            let t = (i / total) * Math.PI * 2;
-            let x = 140 + 110 * (16 * Math.sin(t)**3) / 16;
-            let y = 140 - 110 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+            let keyframes = [];
+            for (let j = 0; j < points.length; j++) {
+                let pIndex = (i + j) % points.length;
+                let percent = (j / points.length) * 100;
+                keyframes.push({
+                    transform: `translate(${points[pIndex].x}px, ${points[pIndex].y}px)`
+                });
+            }
             
-            span.style.left = x + 'px';
-            span.style.top = y + 'px';
+            let anim = span.animate(keyframes, {
+                duration: 8000,
+                iterations: Infinity
+            });
             
-            // ให้แต่ละตัววิ่งไล่ระดับเวลากัน
-            span.style.animationDelay = (i * (6 / total)) + 's';
             container.appendChild(span);
         }
     </script>
