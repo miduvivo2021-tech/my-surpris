@@ -47,12 +47,13 @@
             font-weight: bold;
             color: #ff69b4;
             white-space: nowrap;
-            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 0;
             z-index: 5;
             text-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
             left: 50%;
             top: 50%;
+            pointer-events: none;
         }
         .scatter-item img {
             width: 65px;
@@ -63,12 +64,30 @@
             box-shadow: 0 0 12px rgba(255, 105, 180, 0.9);
             display: block;
         }
+        /* ข้อความบอกให้แตะหน้าจอสดุดตาด้านล่าง */
+        .instruction {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            color: #ff69b4;
+            font-size: 13px;
+            opacity: 0.7;
+            z-index: 20;
+            letter-spacing: 1px;
+            animation: pulseText 1.5s infinite ease-in-out;
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <div class="heart-container" id="heart"></div>
     <div id="scatter-layer"></div>
+    <div class="instruction">แตะหน้าจอ ❤️</div>
 
     <script>
         // 1. สร้างหัวใจตรงกลาง
@@ -90,7 +109,7 @@
             container.appendChild(span);
         }
 
-        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์ตรง 'Screenshot.jpeg' ให้ตรงกับรูปใหม่ของคุณ)
+        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์รูปให้ตรงกับรูปที่คุณอัปโหลด)
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -119,22 +138,26 @@
             scatterItems.push(div);
         }
 
-        // 3. ระบบคลิก/แตะเพื่อกระจาย
-        let isOpened = false;
+        // 3. ระบบแตะหน้าจอให้เด้งขึ้นมา 2 วินาทีแล้วจางหายไปเอง
+        let hideTimeout;
         document.body.addEventListener('click', () => {
-            isOpened = !isOpened;
+            // สั่งให้กระจายออกมาก่อน
             scatterItems.forEach(item => {
-                if (isOpened) {
-                    let x = item.dataset.x;
-                    let y = item.dataset.y;
-                    let rot = (Math.random() - 0.5) * 45;
-                    item.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1) rotate(${rot}deg)`;
-                    item.style.opacity = '1';
-                } else {
+                let x = item.dataset.x;
+                let y = item.dataset.y;
+                let rot = (Math.random() - 0.5) * 45;
+                item.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1) rotate(${rot}deg)`;
+                item.style.opacity = '1';
+            });
+
+            // ล้างเวลาเก่า (ถ้ามี) แล้วตั้งเวลาให้หุบ/จางหายกลับไปเองใน 2 วินาที
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                scatterItems.forEach(item => {
                     item.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
                     item.style.opacity = '0';
-                }
-            });
+                });
+            }, 2000);
         });
     </script>
 
