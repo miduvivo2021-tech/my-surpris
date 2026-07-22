@@ -47,7 +47,7 @@
             font-weight: bold;
             color: #ff69b4;
             white-space: nowrap;
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 0;
             z-index: 5;
             text-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
@@ -85,9 +85,7 @@
 </head>
 <body>
 
-    <!-- เพลงประกอบจากวิดีโอตัวอย่าง -->
-    <audio id="bg-music" autoplay loop>
-        <source src="https://cdns.tiangong.world/audio/romantic_bgm.mp3" type="audio/mpeg">
+    <audio id="bg-music" loop>
         <source src="https://actions.google.com/sounds/v1/ambiences/romantic_music.ogg" type="audio/ogg">
     </audio>
 
@@ -115,7 +113,7 @@
             container.appendChild(span);
         }
 
-        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์รูปให้ตรงกับของคุณ เช่น Screenshot.jpeg)
+        // 2. สร้างรายการข้อความและรูปภาพ (ตรวจสอบชื่อไฟล์รูปให้ตรงกับที่คุณอัปโหลด เช่น Screenshot.jpeg)
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -139,47 +137,4 @@
             div.dataset.x = rx;
             div.dataset.y = ry;
             
-            div.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
-            scatterLayer.appendChild(div);
-            scatterItems.push(div);
-        }
-
-        // 3. ระบบเล่นเพลงอัตโนมัติ และแตะหน้าจอแสดงผล 1 วินาทีแล้วหายไป
-        const music = document.getElementById('bg-music');
-        let hideTimeout;
-
-        // พยายามสั่งเล่นเพลงทันทีที่เข้าเว็บ
-        window.addEventListener('load', () => {
-            music.play().catch(e => {
-                console.log("Autoplay blocked, waiting for user interaction");
-            });
-        });
-
-        document.body.addEventListener('click', () => {
-            // เผื่อกรณีเบราว์เซอร์บล็อกการเล่นอัตโนมัติ จะเล่นทันทีที่กดแตะครั้งแรก
-            if (music.paused) {
-                music.play();
-            }
-
-            // กระจายรูปและข้อความออก
-            scatterItems.forEach(item => {
-                let x = item.dataset.x;
-                let y = item.dataset.y;
-                let rot = (Math.random() - 0.5) * 45;
-                item.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1) rotate(${rot}deg)`;
-                item.style.opacity = '1';
-            });
-
-            // ตั้งเวลาให้จางหายกลับไปใน 1 วินาทีเป๊ะๆ
-            clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(() => {
-                scatterItems.forEach(item => {
-                    item.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
-                    item.style.opacity = '0';
-                });
-            }, 1000);
-        });
-    </script>
-
-</body>
-</html>
+            div.style.transform
