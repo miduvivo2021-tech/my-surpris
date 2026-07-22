@@ -14,67 +14,50 @@
             align-items: center;
             overflow: hidden;
         }
-        .heart-container {
+        .heart-wrapper {
             position: relative;
             width: 320px;
             height: 320px;
-            animation: pulse 1.2s infinite ease-in-out;
+            /* สั่งให้ทั้งรูปหัวใจหมุนรอบตัวเองและขยายเต้นไปพร้อมกัน */
+            animation: spinHeart 10s linear infinite, pulse 1.2s ease-in-out infinite alternate;
         }
-        .moving-heart-text {
+        .heart-item {
             position: absolute;
             font-size: 11px;
             font-weight: bold;
             color: #ff69b4;
             white-space: nowrap;
-            /* ทำให้ข้อความเคลื่อนที่วนตามเส้นทางหัวใจ */
-            animation: flowAlongHeart 8s linear infinite;
+        }
+        @keyframes spinHeart {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.06); }
-            100% { transform: scale(1); }
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.05); }
         }
     </style>
 </head>
 <body>
 
-    <div class="heart-container" id="heart"></div>
+    <div class="heart-wrapper" id="heart"></div>
 
     <script>
         const container = document.getElementById('heart');
+        let total = 32; // จำนวนคำเรียงเป็นรูปหัวใจ
         
-        // สร้างพิกัดเส้นโค้งรูปหัวใจ
-        let points = [];
-        let totalPoints = 36;
-        for (let i = 0; i < totalPoints; i++) {
-            let t = (i / totalPoints) * Math.PI * 2;
-            let x = 150 + 130 * (16 * Math.sin(t)**3) / 16;
-            let y = 150 - 130 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
-            points.push({x: x, y: y});
-        }
-
-        // จำนวนข้อความที่วิ่งวนตามเส้น
-        let textCount = 14;
-        for (let i = 0; i < textCount; i++) {
+        for (let i = 0; i < total; i++) {
             let span = document.createElement('span');
-            span.className = 'moving-heart-text';
+            span.className = 'heart-item';
             span.innerHTML = "ຮັກຫມີພູ❤️";
             
-            let keyframes = [];
-            for (let j = 0; j <= points.length; j++) {
-                let pIndex = (i + j) % points.length;
-                let percent = (j / points.length) * 100;
-                keyframes.push({
-                    transform: `translate(${points[pIndex].x}px, ${points[pIndex].y}px)`,
-                    opacity: (j === 0 || j === points.length) ? 0.3 : 1
-                });
-            }
+            // สูตรคำนวณพิกัดเส้นโค้งรูปหัวใจ
+            let t = (i / total) * Math.PI * 2;
+            let x = 160 + 120 * (16 * Math.sin(t)**3) / 16;
+            let y = 160 - 120 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
             
-            span.animate(keyframes, {
-                duration: 9000,
-                iterations: Infinity
-            });
-            
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
             container.appendChild(span);
         }
     </script>
