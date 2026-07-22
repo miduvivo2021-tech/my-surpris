@@ -16,29 +16,26 @@
             cursor: pointer;
         }
 
-        /* เอฟเฟกต์ดาวตกฉากหลัง */
-        .shooting-star {
+        /* เอฟเฟกต์ดาวตกและหัวใจตกฉากหลัง */
+        .falling-object {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
-            animation: fall linear forwards;
             pointer-events: none;
             z-index: 1;
+            animation: fallDown linear forwards;
         }
-        @keyframes fall {
+        @keyframes fallDown {
             0% {
-                transform: translate(0, 0) rotate(45deg) scale(0);
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
                 opacity: 1;
             }
-            20% {
-                transform: translate(-100px, 100px) rotate(45deg) scale(1);
+            90% {
                 opacity: 1;
             }
             100% {
-                transform: translate(-400px, 400px) rotate(45deg) scale(0.2);
+                transform: translateY(105vh) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -137,35 +134,38 @@
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
-        // ระบบสร้างเสียงพลุด้วย Web Audio API (ไม่ต้องง้อลิงก์ไฟล์เสียงภายนอก โหลดไว เสียงออกชัวร์)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // ระบบเสียงพลุ (Web Audio API)
+        let audioCtx = null;
         function playFireworkSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            // สร้างเสียงระเบิดปังๆ สั้นๆ
-            if (audioCtx) {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.4);
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(15, audioCtx.currentTime + 0.5);
                 
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.4);
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {
+                console.log("Audio error", e);
             }
         }
 
         // 1. สร้างหัวใจตรงกลาง
         const container = document.getElementById('heart');
         let total = 42;
-        
         for (let i = 0; i < total; i++) {
             let span = document.createElement('span');
             span.className = 'heart-item';
@@ -181,7 +181,7 @@
             container.appendChild(span);
         }
 
-        // 2. สร้างรายการข้อความและรูปภาพ
+        // 2. สร้างรายการข้อความ/รูปภาพรอบนอก
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -191,7 +191,6 @@
         
         let scatterItems = [];
         let count = 40;
-
         for (let i = 0; i < count; i++) {
             let div = document.createElement('div');
             div.className = 'scatter-item';
@@ -204,7 +203,6 @@
             
             div.dataset.x = rx;
             div.dataset.y = ry;
-            
             div.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
             scatterLayer.appendChild(div);
             scatterItems.push(div);
@@ -231,10 +229,7 @@
                 fw.style.setProperty('--ty', ty + 'px');
                 
                 document.body.appendChild(fw);
-
-                setTimeout(() => {
-                    fw.remove();
-                }, 800);
+                setTimeout(() => { fw.remove(); }, 800);
             }
 
             if (withSound) {
@@ -242,35 +237,45 @@
             }
         }
 
-        // ฟังก์ชันสร้างดาวตก
-        function createShootingStar() {
-            let star = document.createElement('div');
-            star.className = 'shooting-star';
-            star.style.left = (Math.random() * window.innerWidth + 200) + 'px';
-            star.style.top = (Math.random() * (window.innerHeight * 0.4)) + 'px';
+        // 3. ฟังก์ชันสร้างดาวตก / หัวใจตกลงมาพื้นหลังแบบในคลิป
+        function createFallingBackgroundItem() {
+            let item = document.createElement('div');
+            item.className = 'falling-object';
             
-            let duration = 0.8 + Math.random() * 1;
-            star.style.animationDuration = duration + 's';
+            // สุ่มว่าเป็นหัวใจหรือดาวประกาย
+            if (Math.random() > 0.5) {
+                item.innerHTML = '❤️';
+                item.style.fontSize = (10 + Math.random() * 12) + 'px';
+            } else {
+                item.innerHTML = '✨';
+                item.style.fontSize = (12 + Math.random() * 10) + 'px';
+            }
+
+            item.style.left = Math.random() * window.innerWidth + 'px';
+            item.style.top = '-30px';
             
-            document.body.appendChild(star);
+            let duration = 3 + Math.random() * 4; // ความเร็วในการตกลงมา
+            item.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(item);
             setTimeout(() => {
-                star.remove();
+                item.remove();
             }, duration * 1000);
         }
 
-        // ยิงพลุออโต้ฉากหลังทุกๆ 1.2 วินาที (แบบไม่มีเสียงหนวกหูตอนปล่อยทิ้งไว้)
+        // ยิงพลุออโต้ที่ฉากหลังทุกๆ 1.5 วินาที
         setInterval(() => {
             let randomX = Math.random() * window.innerWidth;
             let randomY = Math.random() * (window.innerHeight * 0.6);
             createFireworks(randomX, randomY, false);
-        }, 1200);
+        }, 1500);
 
-        // ปล่อยดาวตกทุกๆ 800 มิลลิวินาที
+        // ปล่อยดาวตกและหัวใจตกลงมาทุกๆ 300 มิลลิวินาที
         setInterval(() => {
-            createShootingStar();
-        }, 800);
+            createFallingBackgroundItem();
+        }, 300);
 
-        // 3. ระบบแตะหน้าจอ (มีเสียงพลุ + พลุระเบิด + กระจายรูป)
+        // 4. แตะหน้าจอเพื่อระเบิดพลุ กระจายรูปภาพ และเล่นเสียง
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
             scatterItems.forEach(item => {
@@ -284,7 +289,6 @@
             let posX = e.clientX || window.innerWidth / 2;
             let posY = e.clientY || window.innerHeight / 2;
             
-            // แตะหน้าจอให้มีเสียงพลุและพลอร์ตื่นตาตื่นใจ
             createFireworks(posX, posY, true);
 
             clearTimeout(hideTimeout);
