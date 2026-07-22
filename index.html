@@ -18,13 +18,13 @@
         }
         .heart-container {
             position: relative;
-            width: 320px;
-            height: 320px;
+            width: 340px;
+            height: 340px;
             animation: pulse 1.2s infinite ease-in-out;
         }
         .heart-container span {
             position: absolute;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             white-space: nowrap;
         }
@@ -41,13 +41,14 @@
 
     <script>
         const container = document.getElementById('heart');
-        // สร้างเส้นโค้งรูปหัวใจตามหลักคณิตศาสตร์ เป๊ะๆ ไม่เบี้ยวแน่นอน
-        for (let t = 0; t < Math.PI * 2; t += 0.22) {
-            let x = 160 + 130 * (16 * Math.sin(t)**3) / 16;
-            let y = 160 - 130 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+        let steps = 30;
+        for (let i = 0; i < steps; i++) {
+            let t = (i / steps) * Math.PI * 2;
+            let x = 170 + 130 * (16 * Math.sin(t)**3) / 16;
+            let y = 170 - 130 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
             
             let span = document.createElement('span');
-            span.innerHTML = "ຮັກ ❤️";
+            span.innerHTML = "ຮັກຫມີພູ❤️";
             span.style.left = x + 'px';
             span.style.top = y + 'px';
             container.appendChild(span);
