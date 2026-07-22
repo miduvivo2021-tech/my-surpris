@@ -1,176 +1,164 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="lo">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Surprise</title>
+    <title>For You ❤️</title>
     <style>
         body {
-            margin: 0;
             background-color: #000;
-            color: #ff69b4;
+            margin: 0;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             overflow: hidden;
-            font-family: sans-serif;
             cursor: pointer;
-            position: relative;
         }
-
-        /* --- โครงสร้างรูปหัวใจตัวอักษรเรียงตัวแบบในวิดีโอ --- */
         .heart-container {
             position: relative;
-            width: 340px;
-            height: 340px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: heartbeat 1.2s infinite ease-in-out;
+            width: 350px;
+            height: 350px;
+            animation: pulse 1.2s infinite ease-in-out;
+            z-index: 10;
         }
-
-        .t {
+        .heart-item {
             position: absolute;
-            font-size: 13px;
-            color: #ff8da1;
-            text-shadow: 0 0 8px #ff69b4;
-            white-space: nowrap;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        /* --- ข้อความแตะหน้าจอ --- */
-        .tap-text {
-            position: absolute;
-            bottom: 80px;
-            font-size: 1.2rem;
+            font-size: 11px;
+            font-weight: bold;
             color: #ff69b4;
-            animation: pulse 1.5s infinite;
-            text-align: center;
-            z-index: 50;
+            white-space: nowrap;
+            animation: waveGlow 1.5s infinite ease-in-out;
         }
         @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+        @keyframes waveGlow {
+            0%, 100% { opacity: 0.2; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 10px #ff69b4; }
         }
 
-        /* --- รูปภาพที่จะลอยพุ่งออกมาตอนกดหน้าจอ --- */
-        .floating-photo {
+        /* สไตล์สำหรับรูปภาพและข้อความที่จะกระจายตัว */
+        .scatter-item {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 0 15px #ff69b4;
+            font-size: 11px;
+            font-weight: bold;
+            color: #ff69b4;
+            white-space: nowrap;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 0;
-            animation: floatOut 3.5s linear forwards;
-            object-fit: cover;
-            z-index: 100;
+            z-index: 5;
+            text-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
+            left: 50%;
+            top: 50%;
+            pointer-events: none;
         }
-
-        @keyframes floatOut {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
-            20% { opacity: 1; }
-            100% {
-                opacity: 0;
-                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.05);
-            }
+        .scatter-item img {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ff69b4;
+            box-shadow: 0 0 12px rgba(255, 105, 180, 0.9);
+            display: block;
+        }
+        /* ข้อความบอกให้แตะหน้าจอสดุดตาด้านล่าง */
+        .instruction {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            color: #ff69b4;
+            font-size: 13px;
+            opacity: 0.7;
+            z-index: 20;
+            letter-spacing: 1px;
+            animation: pulseText 1.5s infinite ease-in-out;
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <!-- รูปหัวใจข้อความตามคลิปวิดีโอ -->
-    <div class="heart-container" id="heartContainer">
-        <!-- โค้งด้านซ้ายบน -->
-        <div class="t" style="transform: translate(-45px, -100px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(-90px, -80px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(-125px, -50px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(-145px, -15px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        
-        <!-- โค้งด้านขวาบน -->
-        <div class="t" style="transform: translate(45px, -100px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(90px, -80px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(125px, -50px);">ຮักຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(145px, -15px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-
-        <!-- รอยหยักตรงกลางด้านบน -->
-        <div class="t" style="transform: translate(0px, -75px);">ຮັກຫມີພູที่ສຸດ❤️</div>
-
-        <!-- ตัวถังหัวใจฝั่งซ้ายและขวา (ไล่ระดับลงมา) -->
-        <div class="t" style="transform: translate(-135px, 25px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(135px, 25px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        
-        <div class="t" style="transform: translate(-115px, 60px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(115px, 60px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-
-        <div class="t" style="transform: translate(-90px, 90px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(90px, 90px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-
-        <div class="t" style="transform: translate(-60px, 115px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(60px, 115px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-
-        <div class="t" style="transform: translate(-30px, 135px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-        <div class="t" style="transform: translate(30px, 135px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-
-        <!-- ปลายแหลมด้านล่างสุด -->
-        <div class="t" style="transform: translate(0px, 155px);">ຮັກຫມີພູທີ່ສຸດ❤️</div>
-    </div>
-
-    <div class="tap-text" id="promptText">แตะหน้าจอ ❤️</div>
+    <div class="heart-container" id="heart"></div>
+    <div id="scatter-layer"></div>
+    <div class="instruction">แตะหน้าจอ ❤️</div>
 
     <script>
-        const promptText = document.getElementById('promptText');
+        // 1. สร้างหัวใจตรงกลาง
+        const container = document.getElementById('heart');
+        let total = 42;
         
-        // ลิงก์รูปภาพที่จะสุ่มลอยออกมาตอนกดหน้าจอ (สามารถเปลี่ยนลิงก์รูปภาพของคุณได้ตรงนี้)
-        const photoUrls = [
-            'https://i.imgur.com/bM9y4oP.jpeg',
-            'https://i.imgur.com/2i9oGfP.jpeg',
-            'https://i.imgur.com/f0C3rJj.jpeg',
-            'https://i.imgur.com/L2nU3vD.jpeg'
-        ];
-
-        // เมื่อกดแตะหน้าจอ
-        document.body.addEventListener('click', () => {
-            if (promptText.style.display !== 'none') {
-                promptText.style.display = 'none'; // ซ่อนข้อความแตะหน้าจอ
-            }
-
-            // แตะ 1 ครั้ง สุ่มปล่อยรูปออกมา 3 รูปพร้อมกัน
-            for (let i = 0; i < 3; i++) {
-                createFloatingPhoto();
-            }
-        });
-
-        function createFloatingPhoto() {
-            const photo = document.createElement('img');
-            photo.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
-            photo.classList.add('floating-photo');
+        for (let i = 0; i < total; i++) {
+            let span = document.createElement('span');
+            span.className = 'heart-item';
+            span.innerHTML = "ຮັກຫມີພູ❤️";
             
-            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ หน้าจอ
-            const moveX = (Math.random() - 0.5) * 700;
-            const moveY = (Math.random() - 0.5) * 700;
-            photo.style.setProperty('--move-x', `${moveX}px`);
-            photo.style.setProperty('--move-y', `${moveY}px`);
-
-            document.body.appendChild(photo);
-
-            // ลบรูปทิ้งหลังแอนิเมชันจบ
-            photo.addEventListener('animationend', () => {
-                photo.remove();
-            });
+            let t = (i / total) * Math.PI * 2;
+            let x = 160 + 140 * (16 * Math.sin(t)**3) / 16;
+            let y = 160 - 140 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+            
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            span.style.animationDelay = (i * 0.05) + 's';
+            container.appendChild(span);
         }
+
+        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์รูปให้ตรงกับรูปที่คุณอัปโหลด)
+        const scatterLayer = document.getElementById('scatter-layer');
+        const contents = [
+            "ຮັກຫມີພູ❤️", 
+            "ຮັກຫມີພູ❤️", 
+            "<img src='Screenshot.jpeg'>"
+        ];
+        
+        let scatterItems = [];
+        let count = 40;
+
+        for (let i = 0; i < count; i++) {
+            let div = document.createElement('div');
+            div.className = 'scatter-item';
+            div.innerHTML = contents[Math.floor(Math.random() * contents.length)];
+            
+            let angle = Math.random() * Math.PI * 2;
+            let distance = 80 + Math.random() * (window.innerWidth * 0.38);
+            let rx = Math.cos(angle) * distance;
+            let ry = Math.sin(angle) * distance;
+            
+            div.dataset.x = rx;
+            div.dataset.y = ry;
+            
+            div.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
+            scatterLayer.appendChild(div);
+            scatterItems.push(div);
+        }
+
+        // 3. ระบบแตะหน้าจอให้เด้งขึ้นมา 2 วินาทีแล้วจางหายไปเอง
+        let hideTimeout;
+        document.body.addEventListener('click', () => {
+            // สั่งให้กระจายออกมาก่อน
+            scatterItems.forEach(item => {
+                let x = item.dataset.x;
+                let y = item.dataset.y;
+                let rot = (Math.random() - 0.5) * 45;
+                item.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1) rotate(${rot}deg)`;
+                item.style.opacity = '1';
+            });
+
+            // ล้างเวลาเก่า (ถ้ามี) แล้วตั้งเวลาให้หุบ/จางหายกลับไปเองใน 2 วินาที
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                scatterItems.forEach(item => {
+                    item.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
+                    item.style.opacity = '0';
+                });
+            }, 2000);
+        });
     </script>
 
 </body>
