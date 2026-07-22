@@ -8,7 +8,7 @@
         body {
             margin: 0;
             background-color: #000;
-            color: #fff;
+            color: #ff69b4;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -17,11 +17,38 @@
             overflow: hidden;
             font-family: sans-serif;
             cursor: pointer;
+            position: relative;
+        }
+
+        /* --- โครงสร้างรูปหัวใจตัวหนังสือข้อความ (แบบต้นฉบับ) --- */
+        .heart-shape-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .text-heart {
+            position: absolute;
+            font-size: 14px;
+            color: #ff8da1;
+            text-shadow: 0 0 10px #ff69b4;
+            white-space: nowrap;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
 
         /* --- ข้อความแตะหน้าจอ --- */
         .tap-text {
-            font-size: 1.5rem;
+            position: absolute;
+            bottom: 80px;
+            font-size: 1.2rem;
             color: #ff69b4;
             animation: pulse 1.5s infinite;
             text-align: center;
@@ -33,79 +60,56 @@
             100% { opacity: 0.3; }
         }
 
-        /* --- พื้นที่แสดงเอฟเฟกต์ --- */
-        #surprise-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        /* --- หัวใจวนๆ ตรงกลาง --- */
-        .heart-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            clip-path: path('M12 21.583l-10.95-11.726c-1.264-1.359-1.264-3.563 0-4.922 1.264-1.359 3.315-1.359 4.579 0l6.371 6.831 6.371-6.831c1.264-1.359 3.315-1.359 4.579 0 1.264 1.359 1.264 3.563 0 4.922l-10.95 11.726z');
-            border: 2px solid rgba(255, 105, 180, 0.7);
-            animation: rotateOrbit 20s linear infinite;
-            box-shadow: 0 0 20px #ff69b4;
-            display: none; /* ซ่อนไว้ก่อนจนกว่าจะกด */
-        }
-        @keyframes rotateOrbit {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* --- รูปภาพที่เลื่อน/ลอยออกมา --- */
+        /* --- รูปภาพที่ลอยพุ่งออกมาตอนกดหน้าจอ --- */
         .floating-photo {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             border: 3px solid #fff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.9);
             opacity: 0;
             animation: floatOut 4s linear forwards;
             object-fit: cover;
-            z-index: 30;
+            z-index: 100;
         }
+
         @keyframes floatOut {
             0% {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
+                transform: translate(-50%, -50%) scale(0.3);
             }
-            20% { opacity: 1; }
+            15% { opacity: 1; }
             100% {
                 opacity: 0;
-                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1);
+                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.1);
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่ม ❤️</div>
-
-    <div id="surprise-area">
-        <div class="heart-orbit" id="heartOrbit"></div>
+    <div class="heart-shape-container" id="heartContainer">
+        <div class="text-heart" style="transform: translate(0px, -90px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(-50px, -60px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(50px, -60px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(-90px, -20px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(90px, -20px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(-70px, 30px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(70px, 30px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(-40px, 80px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(40px, 80px);">รักกดมีพู ❤️</div>
+        <div class="text-heart" style="transform: translate(0px, 120px);">รักกดมีพู ❤️</div>
     </div>
+
+    <div class="tap-text" id="promptText">แตะหน้าจอ ❤️</div>
 
     <script>
         const promptText = document.getElementById('promptText');
-        const heartOrbit = document.getElementById('heartOrbit');
-        const surpriseArea = document.getElementById('surprise-area');
-        let started = false;
-
-        // รายชื่อรูปภาพ (สามารถเปลี่ยนลิงก์รูปภาพของคุณเองตรงนี้ได้เลย)
+        
+        // รายชื่อรูปภาพที่จะสุ่มลอยออกมา (สามารถเปลี่ยนลิงก์รูปภาพของคุณเองได้ตรงนี้)
         const photoUrls = [
             'https://i.imgur.com/bM9y4oP.jpeg',
             'https://i.imgur.com/2i9oGfP.jpeg',
@@ -113,14 +117,16 @@
             'https://i.imgur.com/L2nU3vD.jpeg'
         ];
 
-        document.body.addEventListener('click', () => {
-            if (!started) {
-                started = true;
-                promptText.style.display = 'none'; // ซ่อนข้อความเริ่มต้น
-                heartOrbit.style.display = 'block'; // แสดงหัวใจวนๆ
-                
-                // เริ่มปล่อยรูปภาพลอยออกมาเรื่อยๆ ทุกๆ 1.2 วินาที
-                setInterval(createFloatingPhoto, 1200);
+        // ทุกครั้งที่แตะหน้าจอ จะมีรูปภาพพุ่งกระจายออกมาเพิ่มขึ้น
+        document.body.addEventListener('click', (e) => {
+            // ซ่อนข้อความเตือนเมื่อกดครั้งแรก
+            if (promptText.style.display !== 'none') {
+                promptText.style.display = 'none';
+            }
+
+            // สร้างรูปภาพพุ่งออกมาทีละ 3 รูปต่อการแตะ 1 ครั้ง เพื่อความอลังการ
+            for (let i = 0; i < 3; i++) {
+                createFloatingPhoto();
             }
         });
 
@@ -129,15 +135,15 @@
             photo.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
             photo.classList.add('floating-photo');
             
-            // สุ่มทิศทางระยะห่างที่รูปจะลอยพุ่งออกมา
-            const moveX = (Math.random() - 0.5) * 500;
-            const moveY = (Math.random() - 0.5) * 500;
+            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ หน้าจอ
+            const moveX = (Math.random() - 0.5) * 700;
+            const moveY = (Math.random() - 0.5) * 700;
             photo.style.setProperty('--move-x', `${moveX}px`);
             photo.style.setProperty('--move-y', `${moveY}px`);
 
-            surpriseArea.appendChild(photo);
+            document.body.appendChild(photo);
 
-            // ลบรูปทิ้งหลังจบแอนิเมชันเพื่อไม่ให้กินแรมเครื่อง
+            // ลบรูปทิ้งเมื่อแอนิเมชันจบ เพื่อป้องกันเครื่องหน่วง
             photo.addEventListener('animationend', () => {
                 photo.remove();
             });
