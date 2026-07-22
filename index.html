@@ -17,8 +17,21 @@
             overflow: hidden;
             font-family: sans-serif;
         }
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 105, 180, 0.2);
+            border: 1px solid #ff69b4;
+            color: #ff69b4;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 10;
+        }
         .tap-text {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #ff69b4;
             animation: pulse 1.5s infinite;
             text-align: center;
@@ -33,15 +46,35 @@
 </head>
 <body>
 
-    <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่ม ❤️</div>
+    <button class="music-btn" id="musicBtn">🎵 เปิดเพลง</button>
+    <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่มความหวาน ❤️</div>
+
+    <!-- ลิงก์ไฟล์เสียงแบบสตรีมมิ่งที่รองรับการเล่นบนเว็บ -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=romantic-guitars-112134.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
         const promptText = document.getElementById('promptText');
-        
-        promptText.addEventListener('click', () => {
-            // เมื่อกดแล้วเปลี่ยนข้อความหรือซ่อนเพื่อจำลองการเข้าไปหน้าข้างใน
-            promptText.innerHTML = "✨ รักนะมีพู ❤️ ✨";
-            promptText.style.cursor = "default";
+
+        function startExperience() {
+            music.play().then(() => {
+                promptText.style.display = 'none';
+                musicBtn.textContent = '🔊 กำลังเล่นเพลง';
+            }).catch(error => {
+                console.log("Autoplay blocked:", error);
+            });
+        }
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startExperience();
+        });
+
+        document.body.addEventListener('click', () => {
+            startExperience();
         });
     </script>
 
