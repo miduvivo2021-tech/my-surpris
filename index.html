@@ -6,7 +6,7 @@
     <title>For You ❤️</title>
     <style>
         body {
-            background-color: #000; /* พื้นหลังสีดำล้วน */
+            background-color: #000;
             margin: 0;
             height: 100vh;
             display: flex;
@@ -40,7 +40,6 @@
             50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 10px #ff69b4; }
         }
 
-        /* สไตล์สำหรับรูปภาพและข้อความที่จะกระจายตัว */
         .scatter-item {
             position: absolute;
             font-size: 11px;
@@ -65,7 +64,6 @@
             display: block;
         }
 
-        /* สไตล์สำหรับพลุไฟ */
         .firework {
             position: absolute;
             width: 6px;
@@ -86,7 +84,6 @@
             }
         }
 
-        /* ข้อความบอกให้แตะหน้าจอ */
         .instruction {
             position: absolute;
             bottom: 30px;
@@ -112,7 +109,6 @@
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
-        // 1. สร้างหัวใจตรงกลาง
         const container = document.getElementById('heart');
         let total = 42;
         
@@ -121,7 +117,7 @@
             span.className = 'heart-item';
             span.innerHTML = "ຮັກຫມີພູ❤️";
             
-            let t = (i / total) . Math.PI * 2;
+            let t = (i / total) * Math.PI * 2;
             let x = 160 + 140 * (16 * Math.sin(t)**3) / 16;
             let y = 160 - 140 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
             
@@ -131,7 +127,6 @@
             container.appendChild(span);
         }
 
-        // 2. สร้างรายการข้อความและรูปภาพ
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -160,10 +155,9 @@
             scatterItems.push(div);
         }
 
-        // ฟังก์ชันสร้างเอฟเฟกต์พลุ
         function createFireworks(clientX, clientY) {
             const colors = ['#ff69b4', '#ff1493', '#ff6b81', '#ff4757', '#ffa502', '#ffffff', '#eccc68'];
-            const particleCount = 25; // จำนวนสะเก็ดพลุ
+            const particleCount = 25;
 
             for (let i = 0; i < particleCount; i++) {
                 let fw = document.createElement('div');
@@ -172,7 +166,6 @@
                 fw.style.top = clientY + 'px';
                 fw.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
-                // สุ่มทิศทางและระยะทางที่พลุจะพุ่งออกไป
                 let angle = Math.random() * Math.PI * 2;
                 let distance = 50 + Math.random() * 120;
                 let tx = Math.cos(angle) * distance;
@@ -183,17 +176,14 @@
                 
                 document.body.appendChild(fw);
 
-                // ลบตัวพลุออกหลังเล่นอนิเมชันจบ
                 setTimeout(() => {
                     fw.remove();
                 }, 800);
             }
         }
 
-        // 3. ระบบแตะหน้าจอ (กระจายรูป + จุดพลุ)
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
-            // สั่งให้รูปและข้อความกระจายออกมาก่อน
             scatterItems.forEach(item => {
                 let x = item.dataset.x;
                 let y = item.dataset.y;
@@ -202,12 +192,10 @@
                 item.style.opacity = '1';
             });
 
-            // เรียกใช้งานพลุตรงจุดที่กดหน้าจอ (หรือจุดกึ่งกลางจอ)
             let posX = e.clientX || window.innerWidth / 2;
             let posY = e.clientY || window.innerHeight / 2;
             createFireworks(posX, posY);
 
-            // ตั้งเวลาให้หุบ/จางหายกลับไปเองใน 2 วินาที
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
                 scatterItems.forEach(item => {
