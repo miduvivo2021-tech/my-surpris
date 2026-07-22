@@ -47,7 +47,7 @@
             font-weight: bold;
             color: #ff69b4;
             white-space: nowrap;
-            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 0;
             z-index: 5;
             text-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
@@ -64,7 +64,7 @@
             box-shadow: 0 0 12px rgba(255, 105, 180, 0.9);
             display: block;
         }
-        /* ข้อความบอกให้แตะหน้าจอสดุดตาด้านล่าง */
+        /* ข้อความบอกให้แตะหน้าจอ */
         .instruction {
             position: absolute;
             bottom: 30px;
@@ -84,6 +84,12 @@
     </style>
 </head>
 <body>
+
+    <!-- เพลงประกอบจากวิดีโอตัวอย่าง -->
+    <audio id="bg-music" autoplay loop>
+        <source src="https://cdns.tiangong.world/audio/romantic_bgm.mp3" type="audio/mpeg">
+        <source src="https://actions.google.com/sounds/v1/ambiences/romantic_music.ogg" type="audio/ogg">
+    </audio>
 
     <div class="heart-container" id="heart"></div>
     <div id="scatter-layer"></div>
@@ -109,7 +115,7 @@
             container.appendChild(span);
         }
 
-        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์รูปให้ตรงกับรูปที่คุณอัปโหลด)
+        // 2. สร้างรายการข้อความและรูปภาพ (เปลี่ยนชื่อไฟล์รูปให้ตรงกับของคุณ เช่น Screenshot.jpeg)
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -138,10 +144,24 @@
             scatterItems.push(div);
         }
 
-        // 3. ระบบแตะหน้าจอให้เด้งขึ้นมา 2 วินาทีแล้วจางหายไปเอง
+        // 3. ระบบเล่นเพลงอัตโนมัติ และแตะหน้าจอแสดงผล 1 วินาทีแล้วหายไป
+        const music = document.getElementById('bg-music');
         let hideTimeout;
+
+        // พยายามสั่งเล่นเพลงทันทีที่เข้าเว็บ
+        window.addEventListener('load', () => {
+            music.play().catch(e => {
+                console.log("Autoplay blocked, waiting for user interaction");
+            });
+        });
+
         document.body.addEventListener('click', () => {
-            // สั่งให้กระจายออกมาก่อน
+            // เผื่อกรณีเบราว์เซอร์บล็อกการเล่นอัตโนมัติ จะเล่นทันทีที่กดแตะครั้งแรก
+            if (music.paused) {
+                music.play();
+            }
+
+            // กระจายรูปและข้อความออก
             scatterItems.forEach(item => {
                 let x = item.dataset.x;
                 let y = item.dataset.y;
@@ -150,14 +170,14 @@
                 item.style.opacity = '1';
             });
 
-            // ล้างเวลาเก่า (ถ้ามี) แล้วตั้งเวลาให้หุบ/จางหายกลับไปเองใน 2 วินาที
+            // ตั้งเวลาให้จางหายกลับไปใน 1 วินาทีเป๊ะๆ
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
                 scatterItems.forEach(item => {
                     item.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0.1)`;
                     item.style.opacity = '0';
                 });
-            }, 2000);
+            }, 1000);
         });
     </script>
 
