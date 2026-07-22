@@ -20,23 +20,23 @@
             position: relative;
         }
 
-        /* --- โครงสร้างรูปหัวใจตัวหนังสือข้อความ (แบบต้นฉบับ) --- */
-        .heart-shape-container {
+        /* --- โครงสร้างหัวใจตัวอักษรแบบต้นฉบับ --- */
+        .heart-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 250px;
+            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
+            animation: heartbeat 1.2s infinite;
         }
 
-        .text-heart {
+        .t {
             position: absolute;
-            font-size: 14px;
+            font-size: 13px;
             color: #ff8da1;
-            text-shadow: 0 0 10px #ff69b4;
+            text-shadow: 0 0 8px #ff69b4;
             white-space: nowrap;
-            animation: heartbeat 1.2s infinite;
         }
 
         @keyframes heartbeat {
@@ -47,7 +47,7 @@
         /* --- ข้อความแตะหน้าจอ --- */
         .tap-text {
             position: absolute;
-            bottom: 80px;
+            bottom: 100px;
             font-size: 1.2rem;
             color: #ff69b4;
             animation: pulse 1.5s infinite;
@@ -60,18 +60,18 @@
             100% { opacity: 0.3; }
         }
 
-        /* --- รูปภาพที่ลอยพุ่งออกมาตอนกดหน้าจอ --- */
+        /* --- รูปภาพที่จะลอยพุ่งออกมาตอนกดหน้าจอ --- */
         .floating-photo {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 75px;
-            height: 75px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 0 15px rgba(255, 105, 180, 0.9);
+            border: 2px solid #fff;
+            box-shadow: 0 0 12px #ff69b4;
             opacity: 0;
-            animation: floatOut 4s linear forwards;
+            animation: floatOut 3.5s linear forwards;
             object-fit: cover;
             z-index: 100;
         }
@@ -81,27 +81,27 @@
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(0.3);
             }
-            15% { opacity: 1; }
+            20% { opacity: 1; }
             100% {
                 opacity: 0;
-                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.1);
+                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1);
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="heart-shape-container" id="heartContainer">
-        <div class="text-heart" style="transform: translate(0px, -90px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(-50px, -60px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(50px, -60px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(-90px, -20px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(90px, -20px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(-70px, 30px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(70px, 30px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(-40px, 80px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(40px, 80px);">รักกดมีพู ❤️</div>
-        <div class="text-heart" style="transform: translate(0px, 120px);">รักกดมีพู ❤️</div>
+    <div class="heart-container" id="heartContainer">
+        <div class="t" style="transform: translate(0px, -80px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(-45px, -55px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(45px, -55px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(-80px, -20px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(80px, -20px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(-65px, 20px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(65px, 20px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(-35px, 60px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(35px, 60px);">รักกดมีพู ❤️</div>
+        <div class="t" style="transform: translate(0px, 95px);">รักกดมีพู ❤️</div>
     </div>
 
     <div class="tap-text" id="promptText">แตะหน้าจอ ❤️</div>
@@ -109,7 +109,7 @@
     <script>
         const promptText = document.getElementById('promptText');
         
-        // รายชื่อรูปภาพที่จะสุ่มลอยออกมา (สามารถเปลี่ยนลิงก์รูปภาพของคุณเองได้ตรงนี้)
+        // ลิงก์รูปภาพที่จะสุ่มลอยออกมา (สามารถเปลี่ยนลิงก์รูปภาพของคุณตรงนี้ได้เลย)
         const photoUrls = [
             'https://i.imgur.com/bM9y4oP.jpeg',
             'https://i.imgur.com/2i9oGfP.jpeg',
@@ -117,14 +117,13 @@
             'https://i.imgur.com/L2nU3vD.jpeg'
         ];
 
-        // ทุกครั้งที่แตะหน้าจอ จะมีรูปภาพพุ่งกระจายออกมาเพิ่มขึ้น
-        document.body.addEventListener('click', (e) => {
-            // ซ่อนข้อความเตือนเมื่อกดครั้งแรก
+        // เมื่อแตะหน้าจอ รูปภาพจะพุ่งกระจายออกมา
+        document.body.addEventListener('click', () => {
             if (promptText.style.display !== 'none') {
-                promptText.style.display = 'none';
+                promptText.style.display = 'none'; // ซ่อนข้อความ "แตะหน้าจอ"
             }
 
-            // สร้างรูปภาพพุ่งออกมาทีละ 3 รูปต่อการแตะ 1 ครั้ง เพื่อความอลังการ
+            // แตะ 1 ครั้ง สุ่มปล่อยรูปออกมา 3 รูปพร้อมกัน
             for (let i = 0; i < 3; i++) {
                 createFloatingPhoto();
             }
@@ -135,15 +134,15 @@
             photo.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
             photo.classList.add('floating-photo');
             
-            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ หน้าจอ
-            const moveX = (Math.random() - 0.5) * 700;
-            const moveY = (Math.random() - 0.5) * 700;
+            // สุ่มทิศทางและระยะทางที่รูปจะพุ่งออกไปรอบ ๆ
+            const moveX = (Math.random() - 0.5) * 600;
+            const moveY = (Math.random() - 0.5) * 600;
             photo.style.setProperty('--move-x', `${moveX}px`);
             photo.style.setProperty('--move-y', `${moveY}px`);
 
             document.body.appendChild(photo);
 
-            // ลบรูปทิ้งเมื่อแอนิเมชันจบ เพื่อป้องกันเครื่องหน่วง
+            // ลบรูปทิ้งหลังแอนิเมชันจบ
             photo.addEventListener('animationend', () => {
                 photo.remove();
             });
