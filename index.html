@@ -15,6 +15,34 @@
             overflow: hidden;
             cursor: pointer;
         }
+
+        /* เอฟเฟกต์ดาวตกฉากหลัง */
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes fall {
+            0% {
+                transform: translate(0, 0) rotate(45deg) scale(0);
+                opacity: 1;
+            }
+            20% {
+                transform: translate(-100px, 100px) rotate(45deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-400px, 400px) rotate(45deg) scale(0.2);
+                opacity: 0;
+            }
+        }
+
         .heart-container {
             position: relative;
             width: 350px;
@@ -70,7 +98,7 @@
             height: 6px;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 2;
+            z-index: 3;
             animation: explode 0.8s ease-out forwards;
         }
         @keyframes explode {
@@ -104,16 +132,37 @@
 </head>
 <body>
 
-    <!-- ซ่อนเสียงพลุไว้เล่นตอนพลุระเบิด -->
-    <audio id="firework-sound" preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12d26f04b1.mp3?filename=firework-explosion-7129.mp3" type="audio/mpeg">
-    </audio>
-
     <div class="heart-container" id="heart"></div>
     <div id="scatter-layer"></div>
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
+        // ระบบสร้างเสียงพลุด้วย Web Audio API (ไม่ต้องง้อลิงก์ไฟล์เสียงภายนอก โหลดไว เสียงออกชัวร์)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playFireworkSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // สร้างเสียงระเบิดปังๆ สั้นๆ
+            if (audioCtx) {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.4);
+                
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        // 1. สร้างหัวใจตรงกลาง
         const container = document.getElementById('heart');
         let total = 42;
         
@@ -132,6 +181,7 @@
             container.appendChild(span);
         }
 
+        // 2. สร้างรายการข้อความและรูปภาพ
         const scatterLayer = document.getElementById('scatter-layer');
         const contents = [
             "ຮັກຫມີພູ❤️", 
@@ -160,19 +210,10 @@
             scatterItems.push(div);
         }
 
-        // ฟังก์ชันเล่นเสียงพลุ (จะเล่นเสียงเมื่อมีการแตะหน้าจอหรือใช้งาน)
-        function playSound() {
-            let sound = document.getElementById('firework-sound');
-            if (sound) {
-                let clone = sound.cloneNode(); // โคลนเสียงเพื่อให้เล่นซ้อนกันหลายๆ ลูกได้เวลาพลุยิงรัวๆ
-                clone.volume = 0.4;
-                clone.play().catch(e => console.log("Audio play blocked"));
-            }
-        }
-
-        function createFireworks(clientX, clientY) {
+        // ฟังก์ชันสร้างพลุ
+        function createFireworks(clientX, clientY, withSound = false) {
             const colors = ['#ff69b4', '#ff1493', '#ff6b81', '#ff4757', '#ffa502', '#ffffff', '#eccc68'];
-            const particleCount = 25;
+            const particleCount = 22;
 
             for (let i = 0; i < particleCount; i++) {
                 let fw = document.createElement('div');
@@ -182,7 +223,7 @@
                 fw.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
                 let angle = Math.random() * Math.PI * 2;
-                let distance = 50 + Math.random() * 120;
+                let distance = 40 + Math.random() * 110;
                 let tx = Math.cos(angle) * distance;
                 let ty = Math.sin(angle) * distance;
                 
@@ -195,20 +236,43 @@
                     fw.remove();
                 }, 800);
             }
+
+            if (withSound) {
+                playFireworkSound();
+            }
         }
 
-        // พลุออโต้ฉากหลัง (จะไม่เปิดเสียงอัตโนมัติเพื่อป้องกันเบราว์เซอร์บล็อกเสียง รอดูตอนผู้ใช้แตะหน้าจอครั้งแรก)
+        // ฟังก์ชันสร้างดาวตก
+        function createShootingStar() {
+            let star = document.createElement('div');
+            star.className = 'shooting-star';
+            star.style.left = (Math.random() * window.innerWidth + 200) + 'px';
+            star.style.top = (Math.random() * (window.innerHeight * 0.4)) + 'px';
+            
+            let duration = 0.8 + Math.random() * 1;
+            star.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(star);
+            setTimeout(() => {
+                star.remove();
+            }, duration * 1000);
+        }
+
+        // ยิงพลุออโต้ฉากหลังทุกๆ 1.2 วินาที (แบบไม่มีเสียงหนวกหูตอนปล่อยทิ้งไว้)
         setInterval(() => {
             let randomX = Math.random() * window.innerWidth;
             let randomY = Math.random() * (window.innerHeight * 0.6);
-            createFireworks(randomX, randomY);
-        }, 1500);
+            createFireworks(randomX, randomY, false);
+        }, 1200);
 
+        // ปล่อยดาวตกทุกๆ 800 มิลลิวินาที
+        setInterval(() => {
+            createShootingStar();
+        }, 800);
+
+        // 3. ระบบแตะหน้าจอ (มีเสียงพลุ + พลุระเบิด + กระจายรูป)
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
-            // เมื่อผู้ใช้แตะหน้าจอ จะเล่นเสียงพลุพร้อมกับยิงพลุและกระจายรูป
-            playSound();
-
             scatterItems.forEach(item => {
                 let x = item.dataset.x;
                 let y = item.dataset.y;
@@ -219,7 +283,9 @@
 
             let posX = e.clientX || window.innerWidth / 2;
             let posY = e.clientY || window.innerHeight / 2;
-            createFireworks(posX, posY);
+            
+            // แตะหน้าจอให้มีเสียงพลุและพลอร์ตื่นตาตื่นใจ
+            createFireworks(posX, posY, true);
 
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
