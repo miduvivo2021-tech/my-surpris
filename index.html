@@ -16,8 +16,8 @@
             cursor: pointer;
         }
 
-        /* เอฟเฟกต์ดาวตกและหัวใจตกฉากหลังแบบพอดีตา ไม่ลายตา */
-        .falling-object {
+        /* เอฟเฟกต์หัวใจตกลงมาทีละกลุ่ม */
+        .falling-heart {
             position: absolute;
             pointer-events: none;
             z-index: 1;
@@ -25,14 +25,14 @@
         }
         @keyframes fallDown {
             0% {
-                transform: translateY(-50px) rotate(0deg);
+                transform: translateY(-40px) rotate(0deg);
                 opacity: 0;
             }
             15% {
-                opacity: 0.8;
+                opacity: 0.9;
             }
             85% {
-                opacity: 0.8;
+                opacity: 0.9;
             }
             100% {
                 transform: translateY(105vh) rotate(360deg);
@@ -134,7 +134,7 @@
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
-        // ระบบเสียงพลุแบบเดิม (เสียงสั้นปังๆ สมจริง ไม่ลากยาว)
+        // ระบบเสียงพลุแบบเดิม (กดปุ๊บดังปั๊บ สั้นกระชับสมจริง)
         let audioCtx = null;
         function playFireworkSound() {
             try {
@@ -233,29 +233,25 @@
             }
         }
 
-        // 3. ฟังก์ชันสร้างดาวตกและหัวใจ (จำนวนพอดี ไม่ลายตา)
-        function createFallingBackgroundItem() {
-            let item = document.createElement('div');
-            item.className = 'falling-object';
-            
-            if (Math.random() > 0.5) {
-                item.innerHTML = '❤️';
-                item.style.fontSize = (10 + Math.random() * 12) + 'px';
-            } else {
-                item.innerHTML = '✨';
-                item.style.fontSize = (12 + Math.random() * 12) + 'px';
+        // 3. ฟังก์ชันสร้างหัวใจหล่นลงมาทีละ 5-6 ดวงต่อรอบ
+        function createFallingHeartsGroup() {
+            let heartCount = 5 + Math.floor(Math.random() * 2); // สุ่ม 5 หรือ 6 ดวง
+            for (let i = 0; i < heartCount; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'falling-heart';
+                heart.innerHTML = '❤️';
+                heart.style.fontSize = (12 + Math.random() * 10) + 'px';
+                heart.style.left = (Math.random() * window.innerWidth) + 'px';
+                heart.style.top = '-40px';
+                
+                let duration = 2.5 + Math.random() * 2;
+                heart.style.animationDuration = duration + 's';
+                
+                document.body.appendChild(heart);
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000);
             }
-
-            item.style.left = Math.random() * window.innerWidth + 'px';
-            item.style.top = '-40px';
-            
-            let duration = 2.5 + Math.random() * 2.5;
-            item.style.animationDuration = duration + 's';
-            
-            document.body.appendChild(item);
-            setTimeout(() => {
-                item.remove();
-            }, duration * 1000);
         }
 
         // พลุออโต้ฉากหลัง
@@ -263,14 +259,14 @@
             let randomX = Math.random() * window.innerWidth;
             let randomY = Math.random() * (window.innerHeight * 0.65);
             createFireworks(randomX, randomY);
-        }, 500);
+        }, 600);
 
-        // ปล่อยดาวตกและหัวใจแบบพอดีตา
+        // ปล่อยหัวใจหล่นลงมาทีละ 5-6 ดวง ทุกๆ 600 มิลลิวินาที
         setInterval(() => {
-            createFallingBackgroundItem();
-        }, 250);
+            createFallingHeartsGroup();
+        }, 600);
 
-        // 4. แตะหน้าจอ (พลุ + เสียงสั้นแบบเดิมสมจริง + กระจายรูป)
+        // 4. แตะหน้าจอ (พลุ + เสียงสั้นดังทันที + กระจายรูป)
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
             scatterItems.forEach(item => {
@@ -285,8 +281,6 @@
             let posY = e.clientY || window.innerHeight / 2;
             
             createFireworks(posX, posY);
-            setTimeout(() => createFireworks(posX - 40, posY - 30), 100);
-            
             playFireworkSound();
 
             clearTimeout(hideTimeout);
