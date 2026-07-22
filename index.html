@@ -104,6 +104,11 @@
 </head>
 <body>
 
+    <!-- ซ่อนเสียงพลุไว้เล่นตอนพลุระเบิด -->
+    <audio id="firework-sound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12d26f04b1.mp3?filename=firework-explosion-7129.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="heart-container" id="heart"></div>
     <div id="scatter-layer"></div>
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
@@ -155,6 +160,16 @@
             scatterItems.push(div);
         }
 
+        // ฟังก์ชันเล่นเสียงพลุ (จะเล่นเสียงเมื่อมีการแตะหน้าจอหรือใช้งาน)
+        function playSound() {
+            let sound = document.getElementById('firework-sound');
+            if (sound) {
+                let clone = sound.cloneNode(); // โคลนเสียงเพื่อให้เล่นซ้อนกันหลายๆ ลูกได้เวลาพลุยิงรัวๆ
+                clone.volume = 0.4;
+                clone.play().catch(e => console.log("Audio play blocked"));
+            }
+        }
+
         function createFireworks(clientX, clientY) {
             const colors = ['#ff69b4', '#ff1493', '#ff6b81', '#ff4757', '#ffa502', '#ffffff', '#eccc68'];
             const particleCount = 25;
@@ -182,8 +197,18 @@
             }
         }
 
+        // พลุออโต้ฉากหลัง (จะไม่เปิดเสียงอัตโนมัติเพื่อป้องกันเบราว์เซอร์บล็อกเสียง รอดูตอนผู้ใช้แตะหน้าจอครั้งแรก)
+        setInterval(() => {
+            let randomX = Math.random() * window.innerWidth;
+            let randomY = Math.random() * (window.innerHeight * 0.6);
+            createFireworks(randomX, randomY);
+        }, 1500);
+
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
+            // เมื่อผู้ใช้แตะหน้าจอ จะเล่นเสียงพลุพร้อมกับยิงพลุและกระจายรูป
+            playSound();
+
             scatterItems.forEach(item => {
                 let x = item.dataset.x;
                 let y = item.dataset.y;
