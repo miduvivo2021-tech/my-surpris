@@ -16,24 +16,23 @@
             cursor: pointer;
         }
 
-        /* เอฟเฟกต์ดาวตกและหัวใจตกฉากหลังแบบแน่นทะลักจอ */
+        /* เอฟเฟกต์ดาวตกและหัวใจตกฉากหลังแบบพอดีตา ไม่ลายตา */
         .falling-object {
             position: absolute;
             pointer-events: none;
             z-index: 1;
             animation: fallDown linear forwards;
-            will-change: transform;
         }
         @keyframes fallDown {
             0% {
                 transform: translateY(-50px) rotate(0deg);
                 opacity: 0;
             }
-            10% {
-                opacity: 1;
+            15% {
+                opacity: 0.8;
             }
-            90% {
-                opacity: 1;
+            85% {
+                opacity: 0.8;
             }
             100% {
                 transform: translateY(105vh) rotate(360deg);
@@ -135,9 +134,9 @@
     <div class="instruction">แตะหน้าจอเพื่อดูเซอร์ไพรส์ ❤️</div>
 
     <script>
-        // ระบบเสียงพลุกด 1 ครั้งดังสะใจ ก้องยาวต่อเนื่อง 2 วินาที
+        // ระบบเสียงพลุแบบเดิม (เสียงสั้นปังๆ สมจริง ไม่ลากยาว)
         let audioCtx = null;
-        function playLongFireworkSound() {
+        function playFireworkSound() {
             try {
                 if (!audioCtx) {
                     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -145,37 +144,20 @@
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
-
-                let now = audioCtx.currentTime;
-
-                let osc1 = audioCtx.createOscillator();
-                let gain1 = audioCtx.createGain();
-                osc1.type = 'triangle';
-                osc1.frequency.setValueAtTime(90, now);
-                osc1.frequency.exponentialRampToValueAtTime(15, now + 1.8);
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.4);
                 
-                gain1.gain.setValueAtTime(0.35, now);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
                 
-                osc1.connect(gain1);
-                gain1.connect(audioCtx.destination);
-                osc1.start(now);
-                osc1.stop(now + 1.8);
-
-                let osc2 = audioCtx.createOscillator();
-                let gain2 = audioCtx.createGain();
-                osc2.type = 'sawtooth';
-                osc2.frequency.setValueAtTime(60, now);
-                osc2.frequency.linearRampToValueAtTime(20, now + 2.0);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
                 
-                gain2.gain.setValueAtTime(0.15, now);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.0);
-                
-                osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
-                osc2.start(now);
-                osc2.stop(now + 2.0);
-
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
             } catch (e) {
                 console.log("Audio error", e);
             }
@@ -251,27 +233,23 @@
             }
         }
 
-        // 3. ฟังก์ชันสร้างดาวตกและหัวใจร่วง (อัดแน่นรัวๆ ทุกเสี้ยววินาที)
+        // 3. ฟังก์ชันสร้างดาวตกและหัวใจ (จำนวนพอดี ไม่ลายตา)
         function createFallingBackgroundItem() {
             let item = document.createElement('div');
             item.className = 'falling-object';
             
-            let rand = Math.random();
-            if (rand > 0.6) {
+            if (Math.random() > 0.5) {
                 item.innerHTML = '❤️';
-                item.style.fontSize = (10 + Math.random() * 18) + 'px';
-            } else if (rand > 0.3) {
-                item.innerHTML = '✨';
-                item.style.fontSize = (12 + Math.random() * 16) + 'px';
+                item.style.fontSize = (10 + Math.random() * 12) + 'px';
             } else {
-                item.innerHTML = '💖';
-                item.style.fontSize = (14 + Math.random() * 20) + 'px';
+                item.innerHTML = '✨';
+                item.style.fontSize = (12 + Math.random() * 12) + 'px';
             }
 
             item.style.left = Math.random() * window.innerWidth + 'px';
-            item.style.top = '-50px';
+            item.style.top = '-40px';
             
-            let duration = 1.5 + Math.random() * 2.5; // ร่วงเร็วและมีมิติ
+            let duration = 2.5 + Math.random() * 2.5;
             item.style.animationDuration = duration + 's';
             
             document.body.appendChild(item);
@@ -280,21 +258,19 @@
             }, duration * 1000);
         }
 
-        // พลุออโต้ฉากหลังยิงรัวๆ ทุกๆ 700 มิลลิวินาที
+        // พลุออโต้ฉากหลัง
         setInterval(() => {
             let randomX = Math.random() * window.innerWidth;
-            let randomY = Math.random() * (window.innerHeight * 0.7);
+            let randomY = Math.random() * (window.innerHeight * 0.65);
             createFireworks(randomX, randomY);
-        }, 700);
+        }, 500);
 
-        // ปล่อยดาวตกและหัวใจร่วงแบบ "พายุเข้า" (รัวทุกๆ 20 มิลลิวินาที ครั้งละ 3 ชิ้น)
+        // ปล่อยดาวตกและหัวใจแบบพอดีตา
         setInterval(() => {
             createFallingBackgroundItem();
-            createFallingBackgroundItem();
-            createFallingBackgroundItem();
-        }, 20);
+        }, 250);
 
-        // 4. แตะหน้าจอ (พลุชุดใหญ่ + เสียงก้องยาว 2 วินาที + กระจายรูป)
+        // 4. แตะหน้าจอ (พลุ + เสียงสั้นแบบเดิมสมจริง + กระจายรูป)
         let hideTimeout;
         document.body.addEventListener('click', (e) => {
             scatterItems.forEach(item => {
@@ -309,10 +285,9 @@
             let posY = e.clientY || window.innerHeight / 2;
             
             createFireworks(posX, posY);
-            setTimeout(() => createFireworks(posX - 60, posY - 50), 100);
-            setTimeout(() => createFireworks(posX + 60, posY + 40), 200);
+            setTimeout(() => createFireworks(posX - 40, posY - 30), 100);
             
-            playLongFireworkSound();
+            playFireworkSound();
 
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
