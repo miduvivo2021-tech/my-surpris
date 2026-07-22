@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Surprise</title>
+    <title>Heart Surprise - Romantic Edition</title>
     <style>
+        /* --- พื้นฐานหน้าจอ --- */
         body {
             margin: 0;
             background-color: #000;
@@ -15,8 +16,10 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            font-family: sans-serif;
+            font-family: 'Sarabun', sans-serif; /* ฟอนต์รองรับภาษาไทย */
         }
+
+        /* --- ปุ่มเปิดเพลง (มุมขวาบน) --- */
         .music-btn {
             position: absolute;
             top: 20px;
@@ -28,29 +31,102 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
-            z-index: 10;
+            z-index: 100;
+            transition: all 0.3s ease;
         }
+        .music-btn:hover {
+            background: rgba(255, 105, 180, 0.4);
+        }
+
+        /* --- ข้อความแตะเพื่อเริ่ม --- */
         .tap-text {
             font-size: 1.3rem;
             color: #ff69b4;
             animation: pulse 1.5s infinite;
             text-align: center;
             cursor: pointer;
+            z-index: 50;
         }
         @keyframes pulse {
             0% { opacity: 0.3; }
             50% { opacity: 1; }
             100% { opacity: 0.3; }
         }
+
+        /* --- คอนเทนเนอร์สำหรับเอฟเฟกต์ --- */
+        #surprise-area {
+            display: none; /* ซ่อนไว้ก่อนตอนแรก */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* ให้คลิกทะลุได้ */
+        }
+
+        /* --- หัวใจวนๆ (หัวใจเปล่า/ขอบ) --- */
+        .heart-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            /* ใช้ border สร้างรูปหัวใจแบบขอบ */
+            clip-path: path('M12 21.583l-10.95-11.726c-1.264-1.359-1.264-3.563 0-4.922 1.264-1.359 3.315-1.359 4.579 0l6.371 6.831 6.371-6.831c1.264-1.359 3.315-1.359 4.579 0 1.264 1.359 1.264 3.563 0 4.922l-10.95 11.726z');
+            border: 2px solid rgba(255, 105, 180, 0.7);
+            animation: rotateOrbit 20s linear infinite;
+            box-shadow: 0 0 20px #ff69b4;
+        }
+
+        @keyframes rotateOrbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* --- รูปภาพที่เลื่อนออกมา --- */
+        .floating-photo {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            opacity: 0; /* ซ่อนไว้ก่อนเริ่มแอนิเมชัน */
+            animation: floatOut linear 6s forwards; /* เลื่อนออกมาแล้วค้างไว้ */
+            object-fit: cover;
+            z-index: 30;
+        }
+
+        @keyframes floatOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            10% { opacity: 1; } /* ปรากฏขึ้นมา */
+            100% {
+                opacity: 0; /* จางหายไปเมื่อเคลื่อนที่ไปไกล */
+                transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1);
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- ปุ่มเปิดเพลง -->
     <button class="music-btn" id="musicBtn">🎵 เปิดเพลง</button>
+    
+    <!-- ข้อความเริ่ม -->
     <div class="tap-text" id="promptText">แตะหน้าจอเพื่อเริ่มความหวาน ❤️</div>
 
-    <!-- ลิงก์ไฟล์เสียงแบบสตรีมมิ่งที่รองรับการเล่นบนเว็บ -->
-    <audio id="bgMusic" loop>
+    <!-- ส่วนเอฟเฟกต์ที่จะแสดงหลังแตะหน้าจอ -->
+    <div id="surprise-area">
+        <!-- หัวใจวนๆ (หัวใจเปล่า) -->
+        <div class="heart-orbit"></div>
+    </div>
+
+    <!-- ลิงก์ไฟล์เสียง (ใช้ลิงก์ที่เปิดเล่นได้จริงบนเว็บ) -->
+    <audio id="bgMusic" loop preload="auto">
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=romantic-guitars-112134.mp3" type="audio/mpeg">
     </audio>
 
@@ -58,14 +134,21 @@
         const music = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         const promptText = document.getElementById('promptText');
+        const surpriseArea = document.getElementById('surprise-area');
+        let isPlaying = false;
 
+        // --- ฟังก์ชันเล่นเพลง ---
         function startExperience() {
-            music.play().then(() => {
-                promptText.style.display = 'none';
-                musicBtn.textContent = '🔊 กำลังเล่นเพลง';
-            }).catch(error => {
-                console.log("Autoplay blocked:", error);
-            });
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    promptText.style.display = 'none';
+                    musicBtn.textContent = '🔊 กำลังเล่นเพลง';
+                    startSurpriseEffects(); // เริ่มเอฟเฟกต์ภาพ
+                }).catch(error => {
+                    console.log("Autoplay was prevented:", error);
+                });
+            }
         }
 
         musicBtn.addEventListener('click', (e) => {
@@ -76,6 +159,41 @@
         document.body.addEventListener('click', () => {
             startExperience();
         });
+
+        // --- ฟังก์ชันจัดการเอฟเฟกต์ภาพ ---
+        function startSurpriseEffects() {
+            surpriseArea.style.display = 'block'; // แสดงพื้นที่เอฟเฟกต์
+
+            // สร้างรูปภาพลอยออกมาเป็นระยะๆ
+            setInterval(createFloatingPhoto, 1500); 
+        }
+
+        // --- รายชื่อรูปภาพ (สามารถแก้ลิงก์รูปภาพได้ที่นี่) ---
+        const photoUrls = [
+            'https://i.imgur.com/bM9y4oP.jpeg',
+            'https://i.imgur.com/2i9oGfP.jpeg',
+            'https://i.imgur.com/f0C3rJj.jpeg',
+            'https://i.imgur.com/L2nU3vD.jpeg'
+        ];
+
+        function createFloatingPhoto() {
+            const photo = document.createElement('img');
+            photo.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+            photo.classList.add('floating-photo');
+            
+            // กำหนดทิศทางและระยะทางการเคลื่อนที่แบบสุ่ม
+            const moveX = (Math.random() - 0.5) * 600; // เคลื่อนที่ไปทางซ้าย/ขวา สูงสุด 300px
+            const moveY = (Math.random() - 0.5) * 800; // เคลื่อนที่ขึ้น/ลง สูงสุด 400px
+            photo.style.setProperty('--move-x', `${moveX}px`);
+            photo.style.setProperty('--move-y', `${moveY}px`);
+
+            surpriseArea.appendChild(photo);
+
+            // ลบรูปออกจาก DOM เมื่อแอนิเมชันจบเพื่อไม่ให้รก
+            photo.addEventListener('animationend', () => {
+                photo.remove();
+            });
+        }
     </script>
 
 </body>
