@@ -18,20 +18,25 @@
         }
         .heart-container {
             position: relative;
-            width: 340px;
-            height: 340px;
-            animation: pulse 1.2s infinite ease-in-out;
+            width: 320px;
+            height: 320px;
         }
         .heart-container span {
             position: absolute;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             white-space: nowrap;
+            /* ทำให้วิ่งวนตามเส้นทาง */
+            animation: rotateHeart 8s linear infinite;
+            transform-origin: center;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
+        @keyframes rotateHeart {
+            0% {
+                transform: rotate(0deg) translate(130px) rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg) translate(130px) rotate(-360deg);
+            }
         }
     </style>
 </head>
@@ -41,16 +46,13 @@
 
     <script>
         const container = document.getElementById('heart');
-        let steps = 30;
-        for (let i = 0; i < steps; i++) {
-            let t = (i / steps) * Math.PI * 2;
-            let x = 170 + 130 * (16 * Math.sin(t)**3) / 16;
-            let y = 170 - 130 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
-            
+        let total = 24; // จำนวนคำที่วิ่งวน
+        for (let i = 0; i < total; i++) {
             let span = document.createElement('span');
             span.innerHTML = "ຮັກຫມີພູ❤️";
-            span.style.left = x + 'px';
-            span.style.top = y + 'px';
+            //กระจายตำแหน่งให้วิ่งไล่เลี่ยกัน
+            let delay = (i / total) * 8;
+            span.style.animationDelay = `-${delay}s`;
             container.appendChild(span);
         }
     </script>
