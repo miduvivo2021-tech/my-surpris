@@ -16,8 +16,31 @@
             cursor: pointer;
         }
 
-        /* ดาวตกและหัวใจร่วงด้านหลังสุด (z-index: 0) ไม่บังตัวหนังสือ */
-        .falling-object {
+        /* เอฟเฟกต์เส้นดาวตกสมจริง (มีหางพุ่งเฉียง) อยู่ด้านหลังสุด */
+        .shooting-star {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,105,180,0));
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: shootStarkAnim linear forwards;
+        }
+        @keyframes shootStarkAnim {
+            0% {
+                transform: translate(0, -100px) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-300px, 105vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        /* หัวใจร่วงด้านหลัง (z-index: 0) */
+        .falling-heart {
             position: absolute;
             pointer-events: none;
             z-index: 0;
@@ -233,26 +256,37 @@
             }
         }
 
-        // 3. ฟังก์ชันสร้างดาวตกและหัวใจหล่นลงมาทีละ 5-6 ดวงต่อรอบ (อยู่ด้านหลังสุด)
+        // 3. ฟังก์ชันสร้างดาวตกแบบเส้นหางสมจริงและหัวใจ หล่นทีละ 5-6 ดวงต่อรอบ
         function createFallingGroup() {
             let groupCount = 5 + Math.floor(Math.random() * 2); // สุ่ม 5 หรือ 6 ดวง
             for (let i = 0; i < groupCount; i++) {
-                let obj = document.createElement('div');
-                obj.className = 'falling-object';
+                let isShootingStar = Math.random() > 0.4; // สุ่มว่าเป็นดาวตกหางยาวหรือหัวใจ
                 
-                // สุ่มว่าเป็นดาวตก (✨) หรือหัวใจ (❤️)
-                obj.innerHTML = Math.random() > 0.5 ? '❤️' : '✨';
-                obj.style.fontSize = (12 + Math.random() * 10) + 'px';
-                obj.style.left = (Math.random() * window.innerWidth) + 'px';
-                obj.style.top = '-40px';
-                
-                let duration = 2.5 + Math.random() * 2;
-                obj.style.animationDuration = duration + 's';
-                
-                document.body.appendChild(obj);
-                setTimeout(() => {
-                    obj.remove();
-                }, duration * 1000);
+                if (isShootingStar) {
+                    let star = document.createElement('div');
+                    star.className = 'shooting-star';
+                    star.style.left = (Math.random() * window.innerWidth + 200) + 'px';
+                    star.style.top = '-50px';
+                    
+                    let duration = 1.0 + Math.random() * 1.0; // พุ่งเร็วแบบดาวตกจริง
+                    star.style.animationDuration = duration + 's';
+                    
+                    document.body.appendChild(star);
+                    setTimeout(() => { star.remove(); }, duration * 1000);
+                } else {
+                    let heart = document.createElement('div');
+                    heart.className = 'falling-heart';
+                    heart.innerHTML = '❤️';
+                    heart.style.fontSize = (12 + Math.random() * 10) + 'px';
+                    heart.style.left = (Math.random() * window.innerWidth) + 'px';
+                    heart.style.top = '-40px';
+                    
+                    let duration = 2.5 + Math.random() * 2;
+                    heart.style.animationDuration = duration + 's';
+                    
+                    document.body.appendChild(heart);
+                    setTimeout(() => { heart.remove(); }, duration * 1000);
+                }
             }
         }
 
@@ -263,7 +297,7 @@
             createFireworks(randomX, randomY);
         }, 600);
 
-        // ปล่อยดาวตกและหัวใจทีละ 5-6 ดวง ทุกๆ 700 มิลลิวินาที
+        // ปล่อยกลุ่มดาวตกและหัวใจทีละ 5-6 ดวง ทุกๆ 700 มิลลิวินาที
         setInterval(() => {
             createFallingGroup();
         }, 700);
